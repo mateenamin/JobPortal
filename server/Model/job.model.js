@@ -27,3 +27,14 @@ const jobseeker = mongoose.Schema(
   
     }
 )
+
+
+// title       → Job ka naam
+// description → Poori detail
+// company     → Kaun si company ne post ki — User se link
+// salary      → Kitni salary
+// location    → Kahan
+// category    → Konsi field
+// status      → pending/approved/rejected — admin decide kare
+// skills      → Kaunsi skills chahiye
+// jobType     → Full time/Part time/Remote
