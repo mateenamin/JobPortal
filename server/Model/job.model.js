@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const jobseeker = mongoose.Schema(
+const jobseeker = new mongoose.Schema(
     {
        title: {
     type: String,
@@ -23,11 +23,29 @@ const jobseeker = mongoose.Schema(
     type: String,
     required: true        // Lahore, Karachi etc
   },
+  category: {
+    type: String,
+    enum: ['IT', 'Marketing', 'Sales', 'Design', 'Other'],
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'    // Pehle pending — admin approve kare
+  },
+  skills: [String],       // ["React", "Node", "MongoDB"]
+  jobType: {
+    type: String,
+    enum: ['fulltime', 'parttime', 'remote'],
+    default: 'fulltime'
+  }
 
   
-    }
+    },
+    { timestamps: true }
 )
 
+export default mongoose.model('Job', jobseeker)
 
 // title       → Job ka naam
 // description → Poori detail
