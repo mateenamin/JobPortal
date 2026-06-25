@@ -56,23 +56,16 @@
 // Footer dikh gaya
 
 
-
 import { Outlet } from "react-router-dom"
+import Navbar from "../components/Navbar"
 
 function UserLayout() {
   return (
     <div>
-      <nav className="bg-blue-600 text-white p-4">
-        <h1>JobPortal</h1>
-      </nav>
-
+      <Navbar />
       <main>
-        <Outlet />  {/* Pages yahan dikhenge */}
+        <Outlet />
       </main>
-
-      <footer className="bg-gray-800 text-white p-4 text-center">
-        <p>JobPortal © 2024</p>
-      </footer>
     </div>
   )
 }
