@@ -7,6 +7,7 @@ import UserLayout from "../layout/UserLayout"
 import Home from "../pages/Home"
 import Jobs from "../pages/Jobs"
 import JobDetail from "../pages/JobDetail"
+import Apply from "../pages/Apply"
 import Login from "../pages/Login"
 import Register from "../pages/Register"
 
@@ -25,6 +26,7 @@ const Router = () => {
         { path: "", element: <Home /> },
         { path: "jobs", element: <Jobs /> },
         { path: "jobs/:id", element: <JobDetail /> },
+        { path: "apply/:id", element: <Apply /> },
         { path: "dashboard", element: <Dashboard /> },
       ]
     },
