@@ -17,6 +17,9 @@ import Dashboard from "../pages/Dashboard"
 // 404
 import NotFound from "../pages/NotFound"
 
+import ProtectedRoute from "../components/ProtectedRoute"
+
+
 const Router = () => {
   const router = createBrowserRouter([
     {
@@ -26,8 +29,23 @@ const Router = () => {
         { path: "", element: <Home /> },
         { path: "jobs", element: <Jobs /> },
         { path: "jobs/:id", element: <JobDetail /> },
-        { path: "apply/:id", element: <Apply /> },
-        { path: "dashboard", element: <Dashboard /> },
+         
+         {
+          path: "apply/:id",
+          element: (
+            <ProtectedRoute>
+              <Apply />
+            </ProtectedRoute>
+          )
+        },
+        {
+          path: "dashboard",
+          element: (
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          )
+        },
       ]
     },
     { path: "/login", element: <Login /> },
