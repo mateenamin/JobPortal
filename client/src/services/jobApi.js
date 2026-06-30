@@ -46,6 +46,21 @@ export const jobApi = createApi({
         body: { status },
       }),
     }),
+    getCompanyJobs: builder.query({
+  query: () => "/jobs/company/myjobs",
+}),
+
+getJobApplicants: builder.query({
+  query: (jobId) => `/applications/job/${jobId}`,
+}),
+
+updateApplicationStatus: builder.mutation({
+  query: ({ id, status }) => ({
+    url: `/applications/${id}/status`,
+    method: "PUT",
+    body: { status },
+  }),
+}),
 
   }),
 })
@@ -56,4 +71,7 @@ export const {
   usePostJobMutation,
   useGetAdminJobsQuery,
   useUpdateJobStatusMutation,
+  useGetCompanyJobsQuery,
+  useGetJobApplicantsQuery,
+  useUpdateApplicationStatusMutation,
 } = jobApi

@@ -138,18 +138,17 @@ function Login() {
 
         {/* Role Select */}
         <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
-          {["jobseeker", "company", "admin"].map((r) => (
-            <button
-              key={r}
-              onClick={() => setRole(r)}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition ${
-                role === r ? "bg-white text-blue-600 shadow" : "text-gray-500"
-              }`}>
-              {r === "jobseeker" ? "Job Seeker" : r}
-            </button>
-          ))}
-        </div>
-
+  {["jobseeker", "company"].map((r) => (
+    <button
+      key={r}
+      onClick={() => setRole(r)}
+      className={`flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition ${
+        role === r ? "bg-white text-blue-600 shadow" : "text-gray-500"
+      }`}>
+      {r === "jobseeker" ? "Job Seeker" : "Company"}
+    </button>
+  ))}
+</div>
         {/* Error */}
         {isError && (
           <div className="bg-red-50 border border-red-200 text-red-500 p-3 rounded-xl mb-4 text-sm">
