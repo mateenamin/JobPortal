@@ -3,12 +3,15 @@ import {
   useGetCompanyJobsQuery,
   usePostJobMutation,
   useGetJobApplicantsQuery,
-  useUpdateApplicationStatusMutation
+  useUpdateApplicationStatusMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation
 } from "../../services/jobApi"
 
 function CompanyDashboard() {
   const user = JSON.parse(localStorage.getItem("user"))
   const [showForm, setShowForm] = useState(false)
+  const [editingJob, setEditingJob] = useState(null)
   const [selectedJob, setSelectedJob] = useState(null)
   const [formData, setFormData] = useState({
     title: "", description: "", location: "", category: "IT",
@@ -17,6 +20,8 @@ function CompanyDashboard() {
 
   const { data, isLoading, refetch } = useGetCompanyJobsQuery()
   const [postJob, { isLoading: posting }] = usePostJobMutation()
+  const [updateJob, { isLoading: updating }] = useUpdateJobMutation()
+  const [deleteJob] = useDeleteJobMutation()
 
   const { data: applicants, isLoading: loadingApplicants } = useGetJobApplicantsQuery(
     selectedJob, { skip: !selectedJob }
@@ -27,13 +32,54 @@ function CompanyDashboard() {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  // Edit button click
+  const handleEditClick = (job) => {
+    setEditingJob(job._id)
+    setFormData({
+      title: job.title,
+      description: job.description,
+      location: job.location,
+      category: job.category,
+      salary: job.salary,
+      jobType: job.jobType,
+      skills: job.skills?.join(", ") || ""
+    })
+    setShowForm(true)
+  }
+
+  // New job button click
+  const handleNewJobClick = () => {
+    setEditingJob(null)
+    setFormData({ title: "", description: "", location: "", category: "IT", salary: "", jobType: "fulltime", skills: "" })
+    setShowForm(!showForm)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const skillsArray = formData.skills.split(",").map(s => s.trim())
-      await postJob({ ...formData, skills: skillsArray }).unwrap()
+
+      if (editingJob) {
+        // Update existing job
+        await updateJob({ id: editingJob, data: { ...formData, skills: skillsArray } }).unwrap()
+      } else {
+        // Create new job
+        await postJob({ ...formData, skills: skillsArray }).unwrap()
+      }
+
       setShowForm(false)
+      setEditingJob(null)
       setFormData({ title: "", description: "", location: "", category: "IT", salary: "", jobType: "fulltime", skills: "" })
+      refetch()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Yeh job delete karna chahte ho?")) return
+    try {
+      await deleteJob(id).unwrap()
       refetch()
     } catch (err) {
       console.log(err)
@@ -60,16 +106,18 @@ function CompanyDashboard() {
             <p className="text-gray-400">{user?.company}</p>
           </div>
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={handleNewJobClick}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition">
             {showForm ? "✕ Close" : "+ Post Job"}
           </button>
         </div>
 
-        {/* Post Job Form */}
+        {/* Form — Add ya Edit */}
         {showForm && (
           <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Naya Job Post Karo</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              {editingJob ? "Job Edit Karo" : "Naya Job Post Karo"}
+            </h2>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <input name="title" value={formData.title} onChange={handleChange} placeholder="Job Title" required
                 className="p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500" />
@@ -100,9 +148,9 @@ function CompanyDashboard() {
             <input name="skills" value={formData.skills} onChange={handleChange}
               placeholder="Skills (comma se separate: React, Node)"
               className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 mb-4" />
-            <button type="submit" disabled={posting}
+            <button type="submit" disabled={posting || updating}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition disabled:opacity-50">
-              {posting ? "Posting..." : "Post Job"}
+              {posting || updating ? "Saving..." : editingJob ? "Update Job" : "Post Job"}
             </button>
           </form>
         )}
@@ -137,11 +185,24 @@ function CompanyDashboard() {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => setSelectedJob(selectedJob === job._id ? null : job._id)}
-                  className="text-blue-600 hover:underline text-sm font-semibold">
-                  {selectedJob === job._id ? "Applicants Chhupaو ▲" : "Applicants Dekho ▼"}
-                </button>
+                {/* Action Buttons */}
+                <div className="flex gap-4 mb-2">
+                  <button
+                    onClick={() => setSelectedJob(selectedJob === job._id ? null : job._id)}
+                    className="text-blue-600 hover:underline text-sm font-semibold">
+                    {selectedJob === job._id ? "Applicants Chhupaو ▲" : "Applicants Dekho ▼"}
+                  </button>
+                  <button
+                    onClick={() => handleEditClick(job)}
+                    className="text-green-600 hover:underline text-sm font-semibold">
+                    ✏️ Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(job._id)}
+                    className="text-red-600 hover:underline text-sm font-semibold">
+                    🗑️ Delete
+                  </button>
+                </div>
 
                 {/* Applicants List */}
                 {selectedJob === job._id && (

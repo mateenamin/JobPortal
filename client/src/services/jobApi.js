@@ -61,6 +61,20 @@ updateApplicationStatus: builder.mutation({
     body: { status },
   }),
 }),
+updateJob: builder.mutation({
+  query: ({ id, data }) => ({
+    url: `/jobs/${id}`,
+    method: "PUT",
+    body: data,
+  }),
+}),
+
+deleteJob: builder.mutation({
+  query: (id) => ({
+    url: `/jobs/${id}`,
+    method: "DELETE",
+  }),
+}),
 
   }),
 })
@@ -74,4 +88,6 @@ export const {
   useGetCompanyJobsQuery,
   useGetJobApplicantsQuery,
   useUpdateApplicationStatusMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
 } = jobApi
