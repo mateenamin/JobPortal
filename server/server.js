@@ -3,11 +3,19 @@ import env from 'dotenv'
 import connectDB from './config/config.js';
 import router from './Route/index.js'
 import adminSeeder from './Seeders/admin.seeder.js'
+import cors from 'cors'
+
 
 env.config();
 
 const app = express();
 const PORT = process.env.PORT
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}))
+
 
 app.use(express.json())
 app.use('/api/v1', router)

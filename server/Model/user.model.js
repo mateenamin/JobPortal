@@ -32,7 +32,7 @@ const userScheme = new mongoose.Schema({
     
 )
 
-export default mongoose.model('user' , userScheme
+export default mongoose.model('User' , userScheme
 )
 
 
